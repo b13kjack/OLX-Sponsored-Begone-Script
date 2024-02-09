@@ -13,7 +13,7 @@ You can turn them back on on the website using "Wyświetl/Ukryj Oferty Sponsorow
 
 ## Instructions // Instrukcje
 
-#### Step 1: ScriptManager
+#### Step 1: Install ScriptManager
 * ![](https://raw.githubusercontent.com/b13kjack/OLX-Sponsored-Begone-Script/main/misc/firefox.png) [Greasemonkey](https://addons.mozilla.org/firefox/addon/greasemonkey/)
 * ![](https://raw.githubusercontent.com/b13kjack/OLX-Sponsored-Begone-Script/main/misc/chrome.png) [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
 * ![](https://raw.githubusercontent.com/b13kjack/OLX-Sponsored-Begone-Script/main/misc/opera.png) [Tampermonkey](https://addons.opera.com/extensions/details/tampermonkey-beta/) or [Violentmonkey](https://addons.opera.com/extensions/details/violent-monkey/) 
@@ -23,10 +23,11 @@ You can turn them back on on the website using "Wyświetl/Ukryj Oferty Sponsorow
 > ##### Note: After installation (which requires restarting your browser), you are now ready to install userscripts.
 > ##### Pamiętaj: Po instalacji zrestartuj przeglądarke aby móc korzystać z userscriptów.
 
-#### Step 2: UserScript
+#### Step 2: Install UserScript
 * [Install](https://greasyfork.org/en/scripts/486980-olx-sponsored-begone/code) *from greasyfork.org*
 * [Install](https://openuserjs.org/install/b13kjack/OLX_Sponsored_Begone.user.js) *from openuserjs.org*
 * [Install](https://raw.githubusercontent.com/b13kjack/OLX-Sponsored-Begone-Script/main/olx-sponsored-begone.user.js) *from github.com*
+
 
 #### Support / Wsparcie
 [Report Issues](https://github.com/reek/anti-adblock-killer/issues)
