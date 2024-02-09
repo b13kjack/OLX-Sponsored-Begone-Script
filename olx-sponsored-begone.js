@@ -14,43 +14,61 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=olx.pl
 // @grant        none
 // ==/UserScript==
+let areSponsoredListingsHidden = true;
+
 function ensureToggleButtonExists() {
-    if (document.querySelector('[data-testid="grid-icon-duplicate"]')) {
-        return;
-    }
-
-    const existingButton = document.querySelector('[data-testid="grid-icon"]');
-    if (existingButton) {
-        const newButton = document.createElement('button');
-        newButton.setAttribute('data-testid', 'grid-icon-duplicate');
-        newButton.textContent = 'Toggle Sponsored Listings';
-        newButton.style.cssText = window.getComputedStyle(existingButton).cssText;
-        existingButton.insertAdjacentElement('afterend', newButton);
-
-        newButton.addEventListener('click', toggleSponsoredListings);
+    if (!document.querySelector('[data-testid="grid-icon-duplicate"]')) {
+        const existingButton = document.querySelector('[data-testid="grid-icon"]');
+        if (existingButton) {
+            const newButton = document.createElement('button');
+            newButton.setAttribute('data-testid', 'grid-icon-duplicate');
+            newButton.textContent = 'Toggle Sponsored Listings';
+            newButton.style.cssText = window.getComputedStyle(existingButton).cssText;
+            existingButton.insertAdjacentElement('afterend', newButton);
+            newButton.addEventListener('click', toggleSponsoredListings);
+        }
     }
 }
 
 function toggleSponsoredListings() {
     areSponsoredListingsHidden = !areSponsoredListingsHidden;
-    const displayStyle = areSponsoredListingsHidden ? 'none' : '';
-    document.querySelectorAll('[data-cy="l-card"] *').forEach(child => {
-        if (child.textContent.includes('Wyróżnione')) {
-            child.style.display = displayStyle;
+    const listingsContainer = document.querySelector('[data-container-for-listings]');
+
+    if (areSponsoredListingsHidden) {
+        document.querySelectorAll('[data-cy="l-card"]').forEach(card => {
+            if (card.textContent.includes('Wyróżnione')) {
+                card.style.display = 'none';
+            }
+        });
+    } else {
+        const sponsoredListings = [];
+        document.querySelectorAll('[data-cy="l-card"]').forEach(card => {
+            if (card.textContent.includes('Wyróżnione')) {
+                card.style.display = '';
+                sponsoredListings.push(card);
+            }
+        });
+
+        sponsoredListings.reverse().forEach(card => {
+            listingsContainer.insertBefore(card, listingsContainer.firstChild);
+        });
+    }
+}
+
+
+setInterval(ensureToggleButtonExists, 5000);
+
+function handleNewListings(mutations) {
+    mutations.forEach(mutation => {
+        if (mutation.addedNodes.length) {
+            toggleSponsoredListings();
         }
     });
 }
 
-const observer = new MutationObserver(mutations => {
-    if (areSponsoredListingsHidden) {
-        toggleSponsoredListings();
-    }
-});
+const observer = new MutationObserver(handleNewListings);
 
 observer.observe(document.body, { childList: true, subtree: true });
 
-let areSponsoredListingsHidden = true;
 ensureToggleButtonExists();
 toggleSponsoredListings();
-
-setInterval(ensureToggleButtonExists, 5000);
