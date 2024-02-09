@@ -14,20 +14,18 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=olx.pl
 // @grant        none
 // ==/UserScript==
-let areSponsoredListingsHidden = true; 
+let areSponsoredListingsHidden = true;
 let isRearrangingListings = false;
 
-function ensureToggleButtonExists() {
-    if (!document.querySelector('[data-testid="grid-icon-duplicate"]')) {
-        const existingButton = document.querySelector('[data-testid="grid-icon"]');
-        if (existingButton) {
-            const newButton = document.createElement('button');
-            newButton.setAttribute('data-testid', 'grid-icon-duplicate');
-            newButton.textContent = 'Toggle Sponsored Listings';
-            newButton.style.cssText = window.getComputedStyle(existingButton).cssText;
-            existingButton.insertAdjacentElement('afterend', newButton);
-            newButton.addEventListener('click', toggleSponsoredListings);
-        }
+function createToggleButton() {
+    const existingButton = document.querySelector('[data-testid="grid-icon"]');
+    if (existingButton && !document.querySelector('[data-testid="grid-icon-duplicate"]')) {
+        const newButton = document.createElement('button');
+        newButton.setAttribute('data-testid', 'grid-icon-duplicate');
+        newButton.textContent = 'Toggle Sponsored Listings';
+        newButton.style.cssText = window.getComputedStyle(existingButton).cssText;
+        existingButton.insertAdjacentElement('afterend', newButton);
+        newButton.addEventListener('click', toggleSponsoredListings);
     }
 }
 
@@ -37,14 +35,20 @@ function toggleSponsoredListings() {
 
     isRearrangingListings = true;
 
-    document.querySelectorAll('[data-cy="l-card"]').forEach(card => {
-        if (card.textContent.includes('Wyróżnione')) {
-            card.style.display = areSponsoredListingsHidden ? 'none' : '';
-            if (!areSponsoredListingsHidden) {
+    const allListings = Array.from(document.querySelectorAll('[data-cy="l-card"]'));
+    const sponsoredListings = allListings.filter(card => card.textContent.includes('Wyróżnione'));
+
+    if (areSponsoredListingsHidden) {
+        sponsoredListings.forEach(card => card.style.display = 'none');
+    } else {
+
+        sponsoredListings.forEach(card => {
+            card.style.display = '';
+            if (!listingsContainer.contains(card)) {
                 listingsContainer.insertBefore(card, listingsContainer.firstChild);
             }
-        }
-    });
+        });
+    }
 
     isRearrangingListings = false;
 }
@@ -60,11 +64,11 @@ function handleNewListings(mutations) {
 }
 
 const observer = new MutationObserver(handleNewListings);
-observer.observe(document.body, { childList: true, subtree: true });
 
-ensureToggleButtonExists();
-if (areSponsoredListingsHidden) {
-    toggleSponsoredListings();
-}
-
-setInterval(ensureToggleButtonExists, 5000);
+window.addEventListener('load', () => {
+    observer.observe(document.body, { childList: true, subtree: true });
+    createToggleButton();
+    if (areSponsoredListingsHidden) {
+        toggleSponsoredListings();
+    }
+});
