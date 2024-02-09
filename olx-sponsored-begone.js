@@ -14,6 +14,22 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=olx.pl
 // @grant        none
 // ==/UserScript==
+function ensureToggleButtonExists() {
+    const existingButton = document.querySelector('[data-testid="grid-icon"]');
+
+    if (!document.querySelector('[data-testid="grid-icon-duplicate"]') && existingButton) {
+        const newButton = document.createElement('button');
+        newButton.setAttribute('data-testid', 'grid-icon-duplicate');
+        newButton.textContent = 'Toggle Sponsored Listings';
+        newButton.style.cssText = window.getComputedStyle(existingButton).cssText;
+        existingButton.insertAdjacentElement('afterend', newButton);
+
+        newButton.addEventListener('click', () => {
+            toggleSponsoredListings();
+        });
+    }
+}
+
 function toggleSponsoredListings() {
     const parentElements = document.querySelectorAll('[data-cy="l-card"]');
 
@@ -22,11 +38,7 @@ function toggleSponsoredListings() {
 
         childElements.forEach(child => {
             if (child.textContent.includes('Wyróżnione')) {
-                if (areSponsoredListingsHidden) {
-                    child.style.display = 'none';
-                } else {
-                    child.style.display = '';
-                }
+                child.style.display = areSponsoredListingsHidden ? 'none' : 'block';
             }
         });
     });
@@ -34,28 +46,19 @@ function toggleSponsoredListings() {
     areSponsoredListingsHidden = !areSponsoredListingsHidden;
 }
 
-const existingButton = document.querySelector('[data-testid="grid-icon"]');
-const newButton = document.createElement('button');
-newButton.setAttribute('data-testid', 'grid-icon-duplicate');
-newButton.textContent = 'Toggle Sponsored Listings';
-newButton.style.cssText = window.getComputedStyle(existingButton).cssText;
-existingButton.insertAdjacentElement('afterend', newButton);
-
-newButton.addEventListener('click', () => {
-    toggleSponsoredListings();
-});
-
-const observer = new MutationObserver(mutations => {
-    mutations.forEach(mutation => {
-        if (mutation.addedNodes.length) {
-            if (areSponsoredListingsHidden) {
-                toggleSponsoredListings();
+    const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+            if (mutation.addedNodes.length) {
+                if (areSponsoredListingsHidden) {
+                    toggleSponsoredListings();
+                }
             }
-        }
+        });
     });
-});
 
-observer.observe(document.body, { childList: true, subtree: true });
+    observer.observe(document.body, { childList: true, subtree: true });
 
 let areSponsoredListingsHidden = true;
 toggleSponsoredListings();
+
+setInterval(ensureToggleButtonExists, 1000);
