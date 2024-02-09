@@ -1,18 +1,21 @@
 // ==UserScript==
-// @name         OLX Sponsored Begone / Ukrywacz ofert sponsorowanych na OLX
-// @namespace    https://github.com/b13kjack/OLX-Sponsored-Begone-Script
-// @version      2024-02-08
-// @description  Hides sponsored listings / Ukrywa oferty sponsorowane
-// @author       b13kjack
-// @downloadURL  https://raw.githubusercontent.com/b13kjack/OLX-Sponsored-Begone-Script/main/olx-sponsored-begone.js
-// @updateURL    https://raw.githubusercontent.com/b13kjack/OLX-Sponsored-Begone-Script/main/olx-sponsored-begone.js
-// @supportURL   https://github.com/b13kjack/OLX-Sponsored-Begone-Script/issues
-// @match        https://olx.pl/*
-// @match        https://*.olx.pl/*
-// @match        https://olx.pl*
-// @match        https://*.olx.pl*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=olx.pl
-// @grant        none
+// @name             OLX Sponsored Begone 
+// @name:pl          Ukrywacz ofert sponsorowanych na OLX
+// @namespace        https://github.com/b13kjack/OLX-Sponsored-Begone-Script
+// @version          2024-02-08
+// @description      Hides sponsored listings
+// @description:pl   Ukrywa oferty sponsorowane
+// @author           b13kjack
+// @license          MIT
+// @downloadURL      https://raw.githubusercontent.com/b13kjack/OLX-Sponsored-Begone-Script/main/olx-sponsored-begone.js
+// @updateURL        https://raw.githubusercontent.com/b13kjack/OLX-Sponsored-Begone-Script/main/olx-sponsored-begone.js
+// @supportURL       https://github.com/b13kjack/OLX-Sponsored-Begone-Script/issues
+// @match            https://olx.pl/*
+// @match            https://*.olx.pl/*
+// @match            https://olx.pl*
+// @match            https://*.olx.pl*
+// @icon             https://www.google.com/s2/favicons?sz=64&domain=olx.pl
+// @grant            none
 // ==/UserScript==
 let areSponsoredListingsHidden = true;
 
