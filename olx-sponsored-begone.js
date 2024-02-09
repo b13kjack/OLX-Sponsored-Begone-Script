@@ -14,51 +14,61 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=olx.pl
 // @grant        none
 // ==/UserScript==
+let areSponsoredListingsHidden = true;
+
 function ensureToggleButtonExists() {
-    const existingButton = document.querySelector('[data-testid="grid-icon"]');
+    if (!document.querySelector('[data-testid="grid-icon-duplicate"]')) {
+        const existingButton = document.querySelector('[data-testid="grid-icon"]');
+        if (existingButton) {
+            const newButton = document.createElement('button');
+            newButton.setAttribute('data-testid', 'grid-icon-duplicate');
+            newButton.textContent = 'Wyświetl/Ukryj Oferty Sponsorowane';
+            newButton.style.cssText = window.getComputedStyle(existingButton).cssText;
+            existingButton.insertAdjacentElement('afterend', newButton);
+            newButton.addEventListener('click', () => {
+                areSponsoredListingsHidden = !areSponsoredListingsHidden;
+                updateSponsoredListingsVisibility();
+            });
+        }
+    }
+}
 
-    if (!document.querySelector('[data-testid="grid-icon-duplicate"]') && existingButton) {
-        const newButton = document.createElement('button');
-        newButton.setAttribute('data-testid', 'grid-icon-duplicate');
-        newButton.textContent = 'Toggle Sponsored Listings';
-        newButton.style.cssText = window.getComputedStyle(existingButton).cssText;
-        existingButton.insertAdjacentElement('afterend', newButton);
+function updateSponsoredListingsVisibility() {
+    const listingsContainer = document.querySelector('[data-container-for-listings]');
 
-        newButton.addEventListener('click', () => {
-            toggleSponsoredListings();
+    if (areSponsoredListingsHidden) {
+        document.querySelectorAll('[data-cy="l-card"]').forEach(card => {
+            if (card.textContent.includes('Wyróżnione')) {
+                card.style.display = 'none';
+            }
+        });
+    } else {
+        const sponsoredListings = [];
+        document.querySelectorAll('[data-cy="l-card"]').forEach(card => {
+            if (card.textContent.includes('Wyróżnione')) {
+                card.style.display = '';
+                sponsoredListings.push(card);
+            }
+        });
+        sponsoredListings.reverse().forEach(card => {
+            listingsContainer.insertBefore(card, listingsContainer.firstChild);
         });
     }
 }
 
-function toggleSponsoredListings() {
-    const parentElements = document.querySelectorAll('[data-cy="l-card"]');
+setInterval(ensureToggleButtonExists, 5000);
 
-    parentElements.forEach(parent => {
-        const childElements = parent.querySelectorAll('*');
-
-        childElements.forEach(child => {
-            if (child.textContent.includes('Wyróżnione')) {
-                child.style.display = areSponsoredListingsHidden ? 'none' : 'block';
-            }
-        });
+function handleNewListings(mutations) {
+    mutations.forEach(mutation => {
+        if (mutation.addedNodes.length) {
+            updateSponsoredListingsVisibility();
+        }
     });
-
-    areSponsoredListingsHidden = !areSponsoredListingsHidden;
 }
 
-    const observer = new MutationObserver(mutations => {
-        mutations.forEach(mutation => {
-            if (mutation.addedNodes.length) {
-                if (areSponsoredListingsHidden) {
-                    toggleSponsoredListings();
-                }
-            }
-        });
-    });
+const observer = new MutationObserver(handleNewListings);
 
-    observer.observe(document.body, { childList: true, subtree: true });
+observer.observe(document.body, { childList: true, subtree: true });
 
-let areSponsoredListingsHidden = true;
-toggleSponsoredListings();
-
-setInterval(ensureToggleButtonExists, 1000);
+ensureToggleButtonExists();
+updateSponsoredListingsVisibility();
