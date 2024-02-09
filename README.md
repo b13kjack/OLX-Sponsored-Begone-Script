@@ -5,7 +5,7 @@
 ####  🇵🇱 Polski:
 
 Prosty skrypt który ukrywa sponsorowane oferty na olx.pl<br>
-Pozwala również na wyświetlanie ukrytych ofert poprzez kliknięcie przycisku "Wyświetl/Ukryj Oferty Sponsorowane" 
+Pozwala również na ponowne wyświetlenie ukrytych ofert poprzez kliknięcie przycisku "Wyświetl/Ukryj Oferty Sponsorowane"
 
 #### 🇬🇧 English:
 Simple JS script that removes sponsored listings on olx.pl<br>
