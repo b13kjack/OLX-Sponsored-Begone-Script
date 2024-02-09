@@ -29,5 +29,5 @@ You can turn them back on on the website using "Wyświetl/Ukryj Oferty Sponsorow
 * [Install](https://raw.githubusercontent.com/b13kjack/OLX-Sponsored-Begone-Script/main/olx-sponsored-begone.user.js) *from github.com*
 
 
-#### Support / Wsparcie
+### Support / Wsparcie
 [Report Issues](https://github.com/reek/anti-adblock-killer/issues)
