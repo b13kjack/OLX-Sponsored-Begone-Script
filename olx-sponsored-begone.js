@@ -14,7 +14,8 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=olx.pl
 // @grant        none
 // ==/UserScript==
-let areSponsoredListingsHidden = true;
+let areSponsoredListingsHidden = true; 
+let isRearrangingListings = false;
 
 function ensureToggleButtonExists() {
     if (!document.querySelector('[data-testid="grid-icon-duplicate"]')) {
@@ -34,31 +35,23 @@ function toggleSponsoredListings() {
     areSponsoredListingsHidden = !areSponsoredListingsHidden;
     const listingsContainer = document.querySelector('[data-container-for-listings]');
 
-    if (areSponsoredListingsHidden) {
-        document.querySelectorAll('[data-cy="l-card"]').forEach(card => {
-            if (card.textContent.includes('Wyróżnione')) {
-                card.style.display = 'none';
-            }
-        });
-    } else {
-        const sponsoredListings = [];
-        document.querySelectorAll('[data-cy="l-card"]').forEach(card => {
-            if (card.textContent.includes('Wyróżnione')) {
-                card.style.display = '';
-                sponsoredListings.push(card);
-            }
-        });
+    isRearrangingListings = true;
 
-        sponsoredListings.reverse().forEach(card => {
-            listingsContainer.insertBefore(card, listingsContainer.firstChild);
-        });
-    }
+    document.querySelectorAll('[data-cy="l-card"]').forEach(card => {
+        if (card.textContent.includes('Wyróżnione')) {
+            card.style.display = areSponsoredListingsHidden ? 'none' : '';
+            if (!areSponsoredListingsHidden) {
+                listingsContainer.insertBefore(card, listingsContainer.firstChild);
+            }
+        }
+    });
+
+    isRearrangingListings = false;
 }
 
-
-setInterval(ensureToggleButtonExists, 5000);
-
 function handleNewListings(mutations) {
+    if (isRearrangingListings) return;
+
     mutations.forEach(mutation => {
         if (mutation.addedNodes.length) {
             toggleSponsoredListings();
@@ -67,8 +60,11 @@ function handleNewListings(mutations) {
 }
 
 const observer = new MutationObserver(handleNewListings);
-
 observer.observe(document.body, { childList: true, subtree: true });
 
 ensureToggleButtonExists();
-toggleSponsoredListings();
+if (areSponsoredListingsHidden) {
+    toggleSponsoredListings();
+}
+
+setInterval(ensureToggleButtonExists, 5000);
