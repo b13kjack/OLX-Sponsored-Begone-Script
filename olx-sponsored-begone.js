@@ -1,3 +1,4 @@
+/* jshint esversion: 6 */
 // ==UserScript==
 // @name             OLX Sponsored Begone 
 // @name:pl          Ukrywacz ofert sponsorowanych na OLX
