@@ -8,8 +8,8 @@
 // @description:pl   Ukrywa oferty sponsorowane na olx.pl
 // @author           b13kjack
 // @license          MIT
-// @downloadURL      https://github.com/b13kjack/OLX-Sponsored-Begone-Script/raw/main/olx-sponsored-begone.js
-// @updateURL        https://github.com/b13kjack/OLX-Sponsored-Begone-Script/raw/main/olx-sponsored-begone.js
+// @downloadURL      https://github.com/b13kjack/OLX-Sponsored-Begone-Script/raw/main/olx-sponsored-begone.user.js
+// @updateURL        https://github.com/b13kjack/OLX-Sponsored-Begone-Script/raw/main/olx-sponsored-begone.user.js
 // @supportURL       https://github.com/b13kjack/OLX-Sponsored-Begone-Script/issues
 // @match            https://olx.pl/*
 // @match            https://*.olx.pl/*
