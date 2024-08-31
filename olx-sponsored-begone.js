@@ -3,7 +3,7 @@
 // @name             OLX Sponsored Begone 
 // @name:pl          Ukrywacz ofert sponsorowanych na OLX
 // @namespace        https://github.com/b13kjack/OLX-Sponsored-Begone-Script
-// @version          2024-02-08
+// @version          2024-08-31
 // @description      Hides sponsored listings on olx.pl
 // @description:pl   Ukrywa oferty sponsorowane na olx.pl
 // @author           b13kjack
