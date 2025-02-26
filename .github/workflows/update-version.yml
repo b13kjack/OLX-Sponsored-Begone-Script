@@ -1,0 +1,41 @@
+name: Update Userscript Version
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Update Version
+        run: |
+          npm install -g semver
+          VERSION=$(grep -oP '(?<=@version\s+).+' olx-sponsored-begone.user.js)
+          if ! echo "$VERSION" | grep -qP '^\d+\.\d+\.\d+$'; then
+            echo "Error: Invalid version format: $VERSION"
+            exit 1
+          fi
+          NEW_VERSION=$(semver -i patch $VERSION)
+          sed -i "s/@version\s\+$VERSION/@version          $NEW_VERSION/" olx-sponsored-begone.user.js
+          sed -i "s/@version\s\+$VERSION/@version          $NEW_VERSION/" olx-sponsored-begone.js
+      - name: Verify Version Update
+        run: |
+          if ! grep -q "@version          $NEW_VERSION" olx-sponsored-begone.user.js || \
+             ! grep -q "@version          $NEW_VERSION" olx-sponsored-begone.js; then
+            echo "Error: Version update failed"
+            exit 1
+          fi
+      - name: Commit and Push
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add .
+          git commit -m "Bump version to $NEW_VERSION"
+          git push

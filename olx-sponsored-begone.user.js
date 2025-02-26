@@ -1,15 +1,13 @@
 /* jshint esversion: 6 */
 // ==UserScript==
-// @name             OLX Sponsored Begone 
+// @name             OLX Sponsored Begone
 // @name:pl          Ukrywacz ofert sponsorowanych na OLX
 // @namespace        https://github.com/b13kjack/OLX-Sponsored-Begone-Script
-// @version          2024-02-08
+// @version          1.1.0
 // @description      Hides sponsored listings on olx.pl
 // @description:pl   Ukrywa oferty sponsorowane na olx.pl
 // @author           b13kjack
 // @license          MIT
-// @downloadURL      https://raw.githubusercontent.com/b13kjack/OLX-Sponsored-Begone-Script/main/olx-sponsored-begone.user.js
-// @updateURL        https://raw.githubusercontent.com/b13kjack/OLX-Sponsored-Begone-Script/main/olx-sponsored-begone.user.js
 // @supportURL       https://github.com/b13kjack/OLX-Sponsored-Begone-Script/issues
 // @match            https://olx.pl/*
 // @match            https://*.olx.pl/*
@@ -17,62 +15,73 @@
 // @match            https://*.olx.pl*
 // @icon             https://www.google.com/s2/favicons?sz=64&domain=olx.pl
 // @grant            none
+// @downloadURL      https://raw.githubusercontent.com/b13kjack/OLX-Sponsored-Begone-Script/main/OLX%20Sponsored%20Begone.user.js
+// @updateURL        https://raw.githubusercontent.com/b13kjack/OLX-Sponsored-Begone-Script/main/OLX%20Sponsored%20Begone.user.js
 // ==/UserScript==
-let areSponsoredListingsHidden = true;
+(function () {
+    'use strict';
 
-function ensureToggleButtonExists() {
-    if (!document.querySelector('[data-testid="grid-icon-duplicate"]')) {
-        const existingButton = document.querySelector('[data-testid="grid-icon"]');
-        if (existingButton) {
-            const newButton = document.createElement('button');
-            newButton.setAttribute('data-testid', 'grid-icon-duplicate');
-            newButton.textContent = 'Wyświetl/Ukryj Oferty Sponsorowane';
-            newButton.style.cssText = window.getComputedStyle(existingButton).cssText;
-            existingButton.insertAdjacentElement('afterend', newButton);
-            newButton.addEventListener('click', () => {
-                areSponsoredListingsHidden = !areSponsoredListingsHidden;
-                updateSponsoredListingsVisibility();
-            });
+    const SPONSORED_TEXT = 'Wyróżnione';
+    const LISTINGS_CONTAINER_SELECTOR = '[data-testid="listing-grid"]';
+    const LISTING_CARD_SELECTOR = '[data-cy="l-card"]';
+    const GRID_ICON_SELECTOR = '[data-testid="grid-icon"]';
+    const TOGGLE_BUTTON_TESTID = 'grid-icon-duplicate';
+
+    let areSponsoredListingsHidden = true;
+
+    function ensureToggleButtonExists() {
+        let toggleButton = document.querySelector(`[data-testid="${TOGGLE_BUTTON_TESTID}"]`);
+        if (!toggleButton) {
+            const referenceButton = document.querySelector(GRID_ICON_SELECTOR);
+            if (referenceButton) {
+                toggleButton = document.createElement('button');
+                toggleButton.setAttribute('data-testid', TOGGLE_BUTTON_TESTID);
+                toggleButton.textContent = areSponsoredListingsHidden ? 'Pokaż Oferty Sponsorowane' : 'Ukryj Oferty Sponsorowane';
+                toggleButton.style.cssText = window.getComputedStyle(referenceButton).cssText;
+                referenceButton.insertAdjacentElement('afterend', toggleButton);
+                toggleButton.addEventListener('click', () => {
+                    areSponsoredListingsHidden = !areSponsoredListingsHidden;
+                    toggleButton.textContent = areSponsoredListingsHidden ? 'Pokaż Oferty Sponsorowane' : 'Ukryj Oferty Sponsorowane';
+                    updateSponsoredListingsVisibility();
+                });
+            } else {
+                console.warn('Grid icon not found. Cannot create toggle button.');
+            }
         }
     }
-}
 
-function updateSponsoredListingsVisibility() {
-    const listingsContainer = document.querySelector('[data-container-for-listings]');
+    function updateSponsoredListingsVisibility() {
+        const listingsContainer = document.querySelector(LISTINGS_CONTAINER_SELECTOR);
+        if (!listingsContainer) {
+            console.warn('Listings container not found.');
+            return;
+        }
 
-    if (areSponsoredListingsHidden) {
-        document.querySelectorAll('[data-cy="l-card"]').forEach(card => {
-            if (card.textContent.includes('Wyróżnione')) {
-                card.style.display = 'none';
+        const listingCards = listingsContainer.querySelectorAll(LISTING_CARD_SELECTOR);
+        if (listingCards.length === 0) {
+            console.warn('No listing cards found.');
+            return;
+        }
+
+        listingCards.forEach(card => {
+            if (card.textContent.includes(SPONSORED_TEXT)) {
+                card.style.display = areSponsoredListingsHidden ? 'none' : '';
             }
-        });
-    } else {
-        const sponsoredListings = [];
-        document.querySelectorAll('[data-cy="l-card"]').forEach(card => {
-            if (card.textContent.includes('Wyróżnione')) {
-                card.style.display = '';
-                sponsoredListings.push(card);
-            }
-        });
-        sponsoredListings.reverse().forEach(card => {
-            listingsContainer.insertBefore(card, listingsContainer.firstChild);
         });
     }
-}
 
-setInterval(ensureToggleButtonExists, 5000);
-
-function handleNewListings(mutations) {
-    mutations.forEach(mutation => {
-        if (mutation.addedNodes.length) {
-            updateSponsoredListingsVisibility();
-        }
+    const observer = new MutationObserver(() => {
+        updateSponsoredListingsVisibility();
     });
-}
+    observer.observe(document.body, { childList: true, subtree: true });
 
-const observer = new MutationObserver(handleNewListings);
+    ensureToggleButtonExists();
+    updateSponsoredListingsVisibility();
 
-observer.observe(document.body, { childList: true, subtree: true });
-
-ensureToggleButtonExists();
-updateSponsoredListingsVisibility();
+    const intervalId = setInterval(() => {
+        ensureToggleButtonExists();
+        if (document.querySelector(`[data-testid="${TOGGLE_BUTTON_TESTID}"]`)) {
+            clearInterval(intervalId);
+        }
+    }, 2000);
+})();
