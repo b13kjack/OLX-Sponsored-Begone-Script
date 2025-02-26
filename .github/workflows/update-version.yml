@@ -1,4 +1,6 @@
 name: Update Userscript Version
+permissions:
+  contents: write
 
 on:
   push:
