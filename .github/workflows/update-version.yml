@@ -16,13 +16,17 @@ jobs:
           node-version: '16'
       - name: Update Version
         run: |
-          npm install -g semver
-          VERSION=$(grep -oP '(?<=@version\s+).+' olx-sponsored-begone.user.js)
-          if ! echo "$VERSION" | grep -qP '^\d+\.\d+\.\d+$'; then
+          VERSION=$(grep -oE '@version[[:space:]]+[0-9]+\.[0-9]+\.[0-9]+' olx-sponsored-begone.user.js | awk '{print $2}')
+          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
             echo "Error: Invalid version format: $VERSION"
             exit 1
           fi
-          NEW_VERSION=$(semver -i patch $VERSION)
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          if [ "$PATCH" -lt 9 ]; then
+            NEW_VERSION="$MAJOR.$MINOR.$((PATCH+1))"
+          else
+            NEW_VERSION="$MAJOR.$((MINOR+1)).0"
+          fi
           sed -i "s/@version\s\+$VERSION/@version          $NEW_VERSION/" olx-sponsored-begone.user.js
           sed -i "s/@version\s\+$VERSION/@version          $NEW_VERSION/" olx-sponsored-begone.js
       - name: Verify Version Update
