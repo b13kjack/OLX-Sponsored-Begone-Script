@@ -37,9 +37,11 @@ jobs:
             exit 1
           fi
       - name: Commit and Push
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
           git add .
           git commit -m "Bump version to $NEW_VERSION"
-          git push
+          git push https://x-access-token:${ACCESS_TOKEN}@github.com/b13kjack/OLX-Sponsored-Begone-Script.git HEAD:main
