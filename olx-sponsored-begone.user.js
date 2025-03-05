@@ -14,8 +14,8 @@
 // @match            https://*.olx.pl*
 // @icon             https://www.google.com/s2/favicons?sz=64&domain=olx.pl
 // @grant            none
-// @downloadURL      https://github.com/b13kjack/OLX-Sponsored-Begone-Script/raw/refs/heads/main/olx-sponsored-begone.user.js
-// @updateURL        https://github.com/b13kjack/OLX-Sponsored-Begone-Script/raw/refs/heads/main/olx-sponsored-begone.user.js
+// @downloadURL      https://raw.githubusercontent.com/b13kjack/OLX-Sponsored-Begone-Script/main/olx-sponsored-begone.user.js
+// @updateURL        https://raw.githubusercontent.com/b13kjack/OLX-Sponsored-Begone-Script/main/olx-sponsored-begone.user.js
 // ==/UserScript==
 (function () {
     'use strict';
